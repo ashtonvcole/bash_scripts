@@ -74,6 +74,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 exec apptainer exec \
+    --bind "$PWD" \
     $CONTAINER_RUNOPTIONS \
     "$CONTAINER" \
     "$PROGRAM" "${PROGRAM_ARGS[@]}"
