@@ -5,7 +5,7 @@
 # This lets the user call the container as if they were running the software
 
 VERSION="1.0.0"
-CONTAINER="docker://georgiastuart/figuregen"
+CONTAINER="docker://georgiastuart/figuregen-serial"
 PROGRAM="figuregen"
 CONTAINER_TYPE="apptainer"
 CONTAINER_RUNCOMMAND="apptainer exec"
