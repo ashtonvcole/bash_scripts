@@ -6,7 +6,7 @@
 
 VERSION="1.0.0"
 CONTAINER="docker://georgiastuart/figuregen"
-PROGRAM=""
+PROGRAM="figuregen"
 CONTAINER_TYPE="apptainer"
 CONTAINER_RUNCOMMAND="apptainer exec"
 
