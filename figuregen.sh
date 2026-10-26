@@ -73,8 +73,8 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-exec apptainer exec \
+exec $CONTAINER_RUNCOMMAND \
     --bind "$PWD" \
-    $CONTAINER_RUNOPTIONS \
+    "${CONTAINER_RUNOPTIONS[@]}" \
     "$CONTAINER" \
     "$PROGRAM" "${PROGRAM_ARGS[@]}"

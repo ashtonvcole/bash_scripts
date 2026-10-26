@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # container_wrapper.sh
-# Wrapper for containerized figuregen
+# Wrapper for containerized application
 # This lets the user call the container as if they were running the software
 
 VERSION="1.0.0"
@@ -73,8 +73,8 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-exec apptainer exec \
+exec $CONTAINER_RUNCOMMAND \
     --bind "$PWD" \
-    $CONTAINER_RUNOPTIONS \
+    "${CONTAINER_RUNOPTIONS[@]}" \
     "$CONTAINER" \
     "$PROGRAM" "${PROGRAM_ARGS[@]}"
