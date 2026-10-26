@@ -28,7 +28,7 @@ show_help() {
 }
 
 # Accumulate arguments in the appropriate bins
-CONTAINER_RUNOPTIONS=""
+CONTAINER_ARGS=()
 PROGRAM_ARGS=()
 
 # Iterate through user arguments and parse them appropriately
@@ -54,7 +54,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -cx|--container-args)
             if [[ -n "$2" && "$2" != -* ]]; then
-                CONTAINER_RUNOPTIONS="$2" # Get the arg contents as well
+                read -ra CONTAINER_ARGS <<< "$2" # Get the arg contents as well
                 shift 2 # Discard $1 and $2
             else
                 echo "Error: Argument for $1 is missing" >&2
@@ -75,6 +75,6 @@ done
 
 exec $CONTAINER_RUNCOMMAND \
     --bind "$PWD" \
-    "${CONTAINER_RUNOPTIONS[@]}" \
+    "${CONTAINER_ARGS[@]}" \
     "$CONTAINER" \
     "$PROGRAM" "${PROGRAM_ARGS[@]}"
