@@ -99,5 +99,5 @@ exec $CONTAINER_RUNCOMMAND \
     --bind "$PWD" \
     "${CONTAINER_RUNOPTIONS[@]}" \
     "$CONTAINER" \
-    mpirun -np $NP "${MPI_ARGS[@]}" \
+    mpirun -np "$NP" "${MPI_ARGS[@]}" \
     "$PROGRAM" "${PROGRAM_ARGS[@]}"
