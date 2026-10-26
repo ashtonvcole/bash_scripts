@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# container_wrapper.sh
-# Wrapper for containerized figuregen
+# figuregen.sh
+# Wrapper for containerized figuregen, in parallel
 # This lets the user call the container as if they were running the software
 
 VERSION="1.0.0"
-CONTAINER="docker://georgiastuart/figuregen-serial"
-PROGRAM="figuregen"
+CONTAINER="docker://georgiastuart/figuregen"
+PROGRAM=""
 CONTAINER_TYPE="apptainer"
 CONTAINER_RUNCOMMAND="apptainer exec"
 
 show_help() {
-    echo "Bash script wrapper to run $PROGRAM."
+    echo "Bash script wrapper to run $PROGRAM in parallel with MPI."
     echo ""
     echo "Container name: $CONTAINER"
     echo "Container type: $CONTAINER_TYPE"
@@ -20,20 +20,33 @@ show_help() {
     echo "  $PROGRAM [program options]"
     echo ""
     echo "Options:"
+    echo "  -nx, -npx, --nx, --npx Number of processes to run. Default is 1."
     echo "  -h, --help        Show this message, then the same for the program."
     echo "  -hx, --helpx      Show this message, then exit."
     echo "  -v, --version     Show the version, then the same for the program."
     echo "  -vx, --versionx   Show the version, then exit."
     echo "  -cx, --container-args \"args\" Pass arguments to $CONTAINER_RUNCOMMAND."
+    echo "  -mx, --mpi-args \"args\" Pass arguments to mpirun."
 }
 
 # Accumulate arguments in the appropriate bins
 CONTAINER_RUNOPTIONS=""
 PROGRAM_ARGS=()
+MPI_ARGS=()
+NP=1
 
 # Iterate through user arguments and parse them appropriately
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        -nx|-npx|--nx|--npx)
+            if [[ -n "$2" && "$2" != -* ]]; then
+                NP="$2" # Get the arg contents as well
+                shift 2 # Discard $1 and $2
+            else
+                echo "Error: Argument for $1 is missing" >&2
+                exit 1
+            fi
+            ;;
         -hx|--helpx)
             show_help
             exit 0
@@ -61,6 +74,15 @@ while [[ $# -gt 0 ]]; do
                 exit 1
             fi
             ;;
+        -mx|--mpi-args)
+            if [[ -n "$2" && "$2" != -* ]]; then
+                MPI_ARGS="$2" # Get the arg contents as well
+                shift 2 # Discard $1 and $2
+            else
+                echo "Error: Argument for $1 is missing" >&2
+                exit 1
+            fi
+            ;;
         --) # Double-dash convention: everything after is for the program
             shift # Skip the double-dash per se
             PROGRAM_ARGS+=("$@") # Add everything
@@ -77,4 +99,5 @@ exec $CONTAINER_RUNCOMMAND \
     --bind "$PWD" \
     "${CONTAINER_RUNOPTIONS[@]}" \
     "$CONTAINER" \
+    mpirun -np $NP "${MPI_ARGS[@]}" \
     "$PROGRAM" "${PROGRAM_ARGS[@]}"
